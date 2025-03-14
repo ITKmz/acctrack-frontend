@@ -1,7 +1,7 @@
-import { app, BrowserWindow } from "electron";
-import path from "path";
+import { app, BrowserWindow } from 'electron';
+import path from 'path';
 
-app.on("ready", () => {
+app.on('ready', () => {
     const win = new BrowserWindow({
         width: 1280, // Default width
         height: 720, // Default height
@@ -14,9 +14,9 @@ app.on("ready", () => {
     win.maximize(); // ✅ Open in maximized window mode
     win.show(); // ✅ Show the window after maximizing
 
-    if (process.env.NODE_ENV === "development") {
-        win.loadURL("http://localhost:5173");
+    if (process.env.NODE_ENV === 'development') {
+        win.loadURL('http://localhost:5173');
     } else {
-        win.loadFile(path.join(app.getAppPath(), "dist-react", "index.html"));
+        win.loadFile(path.join(app.getAppPath(), 'dist-react', 'index.html'));
     }
 });
