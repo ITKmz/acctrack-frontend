@@ -1,0 +1,49 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependency directories
+node_modules
+
+# Build output
+dist
+dist-react
+
+# Local environment files
+*.local
+.env
+.env.*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Coverage reports
+coverage/
+
+# Cache files
+.cache/
+*.cache
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.orig
+
+# Lock files (optional, depending on your workflow)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
