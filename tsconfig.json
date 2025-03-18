@@ -1,13 +1,13 @@
 {
     "compilerOptions": {
-        "baseUrl": ".",
-        "paths": {
-            "@/*": ["src/ui/*"]
-        }
+      "baseUrl": "./",
+      "paths": {
+        "@/*": ["./src/ui/*"]
+      }
     },
-    "files": [],
     "references": [
-        { "path": "./tsconfig.app.json" },
-        { "path": "./tsconfig.node.json" }
+      { "path": "./tsconfig.app.json" },
+      { "path": "./tsconfig.node.json" }
     ]
-}
+  }
+  
