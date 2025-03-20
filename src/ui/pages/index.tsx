@@ -1,7 +1,9 @@
+import DefaultLayout from "@/layouts/default";
+
 export default function IndexPage() {
     return (
-        <div>
+        <DefaultLayout>
             <h1>Index Page</h1>
-        </div>
+        </DefaultLayout>
     );
 }
