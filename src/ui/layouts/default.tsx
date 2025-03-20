@@ -1,5 +1,5 @@
 import React from 'react';
-import { Breadcrumb, Layout, theme } from 'antd';
+import { Layout } from 'antd';
 import AppHeader from '@/components/AppHeader';
 import AppSidebar from '@/components/AppSidebar';
 import AppFooter from '@/components/AppFooter';

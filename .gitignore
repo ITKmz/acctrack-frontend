@@ -13,6 +13,7 @@ node_modules
 # Build output
 dist
 dist-react
+dist-electron
 
 # Local environment files
 *.local
