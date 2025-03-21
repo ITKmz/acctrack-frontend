@@ -1,5 +1,7 @@
 {
     "name": "acctrack-frontend",
+    "description": "A simple accounting software",
+    "author": "Ittikorn",
     "private": true,
     "version": "0.0.0",
     "type": "module",
@@ -37,7 +39,7 @@
         "@types/react": "^19.0.8",
         "@types/react-dom": "^19.0.3",
         "@vitejs/plugin-react-swc": "^3.8.0",
-        "electron": "^34.1.1",
+        "electron": "^35.0.3",
         "electron-builder": "^25.1.8",
         "eslint": "^9.20.0",
         "eslint-config-prettier": "^10.1.1",
@@ -53,5 +55,10 @@
     "engines": {
         "npm": "please-use-pnpm",
         "pnpm": ">=9.0.0"
+    },
+    "pnpm": {
+        "onlyBuiltDependencies": [
+            "electron"
+        ]
     }
 }

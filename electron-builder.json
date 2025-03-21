@@ -9,7 +9,8 @@
         "target": "dmg"
     },
     "win": {
-        "target": ["portable", "msi"]
+        "target": ["portable", "msi"],
+        "icon": "src/assets/AccTrack.ico"
     },
     "linux": {
         "target": "AppImage",
