@@ -5,6 +5,7 @@ import {
     DollarCircleOutlined,
     ShoppingCartOutlined,
     FileTextOutlined,
+    SettingOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { useNavigate } from 'react-router-dom';
@@ -32,6 +33,11 @@ const items: MenuProps['items'] = [
         icon: <ShoppingCartOutlined className="text-[32px]" />,
         label: <span className="text-base">สินค้า</span>, // Products
     },
+    {
+        key: 'settings',
+        icon: <SettingOutlined className="text-[32px]" />,
+        label: <span className="text-base">ตั้งค่า</span>, // Settings
+    },
 ];
 
 const AppSidebar: React.FC = () => {
@@ -54,7 +60,7 @@ const AppSidebar: React.FC = () => {
             <Menu
                 mode="inline"
                 onClick={({ key }) => {
-                    navigate(key === 'home' ? '/' : `/${key}`);
+                    navigate(`/${key}`);
                 }}
                 defaultSelectedKeys={['home']}
                 style={{ height: '100%', borderRight: 0 }}
