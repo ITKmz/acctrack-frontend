@@ -2,11 +2,12 @@
 
 interface Window {
     process: {
-      versions: {
-        electron: string;
-      };
+        versions: {
+            electron: string;
+        };
     };
     electron: {
-      saveFile: (jsonData: string) => void;
+        saveFile: (id: string, businessData: any) => void;
+        readFile: (id: string) => Promise<any>;
     };
-  }
+}

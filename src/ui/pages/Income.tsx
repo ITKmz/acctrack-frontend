@@ -34,7 +34,7 @@ export default function IncomePage() {
 
         if (isElectron) {
             // In Electron, send the data to the main process to save the file
-            window.electron.saveFile(jsonData);
+            // window.electron.saveFile(jsonData);
         } else {
             // In the web, use file-saver to trigger the download
             const blob = new Blob([jsonData], { type: 'application/json' });

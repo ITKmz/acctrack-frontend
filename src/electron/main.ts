@@ -29,16 +29,24 @@ app.on('ready', () => {
     }
 });
 
-ipcMain.handle('save-file', async (event, jsonData: string) => {
-    const result = await dialog.showSaveDialog({
-        title: 'Save File',
-        defaultPath: 'form-data.json',
-        filters: [{ name: 'JSON Files', extensions: ['json'] }],
-    });
+// Save data to a file named by user ID
+ipcMain.handle('save-file', async (event, { id, businessData }) => {
+    const filePath = path.join(app.getPath('userData'), `${id}.json`);
+    
+    // Save business data in structured format
+    fs.writeFileSync(filePath, JSON.stringify(businessData, null, 2));
+});
 
-    if (!result.canceled && result.filePath) {
-        fs.writeFileSync(result.filePath, jsonData);
+// Read data from a file named by user ID
+ipcMain.handle('read-file', async (event, id) => {
+    const filePath = path.join(app.getPath('userData'), `${id}.json`);
+
+    if (fs.existsSync(filePath)) {
+        const rawData = fs.readFileSync(filePath, 'utf-8');
+        return JSON.parse(rawData);
     }
+
+    return {};  // Return empty if file doesn't exist
 });
 
 app.on('window-all-closed', () => {
