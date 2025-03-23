@@ -8,7 +8,7 @@ interface FormData {
     email: string;
 }
 
-export default function IndexPage() {
+export default function IncomePage() {
     const [form] = Form.useForm();
     const [formData, setFormData] = useState<FormData>({ name: '', email: '' });
     const [isElectron, setIsElectron] = useState<boolean>(false);
@@ -44,7 +44,7 @@ export default function IndexPage() {
 
     return (
         <DefaultLayout>
-            <h1 className="text-2xl font-bold mb-4">Index Page</h1>
+            <h1 className="text-2xl font-bold mb-4">Income Page</h1>
             <Form
                 form={form}
                 name="basic"

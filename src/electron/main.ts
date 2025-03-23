@@ -1,5 +1,11 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 app.on('ready', () => {
     const win = new BrowserWindow({
@@ -7,7 +13,9 @@ app.on('ready', () => {
         height: 720, // Default height
         show: false, // Prevents flickering on startup
         webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
             nodeIntegration: true,
+            contextIsolation: true,
         },
     });
 
@@ -19,4 +27,20 @@ app.on('ready', () => {
     } else {
         win.loadFile(path.join(app.getAppPath(), 'dist-react', 'index.html'));
     }
+});
+
+ipcMain.handle('save-file', async (event, jsonData: string) => {
+    const result = await dialog.showSaveDialog({
+        title: 'Save File',
+        defaultPath: 'form-data.json',
+        filters: [{ name: 'JSON Files', extensions: ['json'] }],
+    });
+
+    if (!result.canceled && result.filePath) {
+        fs.writeFileSync(result.filePath, jsonData);
+    }
+});
+
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') app.quit();
 });

@@ -7,6 +7,7 @@ import {
     FileTextOutlined,
 } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
+import { useNavigate } from 'react-router-dom';
 
 const { Sider } = Layout;
 
@@ -34,6 +35,7 @@ const items: MenuProps['items'] = [
 ];
 
 const AppSidebar: React.FC = () => {
+    const navigate = useNavigate();
     const {
         token: { colorBgContainer },
     } = theme.useToken();
@@ -47,10 +49,13 @@ const AppSidebar: React.FC = () => {
             className="h-screen"
         >
             <div className="flex items-center justify-center py-4">
-              <h1 className="text-2xl font-bold">AccTrack</h1>
+                <h1 className="text-2xl font-bold">AccTrack</h1>
             </div>
             <Menu
                 mode="inline"
+                onClick={({ key }) => {
+                    navigate(key === 'home' ? '/' : `/${key}`);
+                }}
                 defaultSelectedKeys={['home']}
                 style={{ height: '100%', borderRight: 0 }}
                 items={items}
