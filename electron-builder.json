@@ -1,10 +1,7 @@
 {
     "appId": "com.ittikorn.acctrack",
     "productName": "AccTrack",
-    "files": [
-        "dist-react",
-        "dist-electron"
-    ],
+    "files": ["dist-react", "dist-electron"],
     "mac": {
         "target": "dmg"
     },

@@ -23,6 +23,6 @@ interface BusinessData {
 // Expose methods to the renderer process
 contextBridge.exposeInMainWorld('electron', {
     saveFile: (id: string, businessData: BusinessData) =>
-        ipcRenderer.invoke('save-file', { id, businessData }),
-    readFile: (id: string) => ipcRenderer.invoke('read-file', id),
+        ipcRenderer.invoke('saveFile', { id, businessData }),
+    readFile: (id: string) => ipcRenderer.invoke('readFile', id),
 });

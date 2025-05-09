@@ -14,7 +14,10 @@ function App() {
             <Route path="/expenses" element={<ExpensesPage />} />
             <Route path="/products" element={<ProductsPage />} />
 
-            <Route path="/settings" element={<Navigate to="/settings/company" />} />
+            <Route
+                path="/settings"
+                element={<Navigate to="/settings/company" />}
+            />
             <Route path="/settings/company" element={<SettingsPage />} />
         </Routes>
     );

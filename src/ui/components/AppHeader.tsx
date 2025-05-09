@@ -15,7 +15,7 @@ const AppHeader: React.FC = () => {
             className="flex items-center"
         >
             <Flex>
-                <BsBuildings size={32}/>
+                <BsBuildings size={32} />
                 <div className="h-8 w-px bg-gray-300 mx-4"></div>
             </Flex>
         </Header>

@@ -29,24 +29,32 @@ app.on('ready', () => {
     }
 });
 
-// Save data to a file named by user ID
-ipcMain.handle('save-file', async (event, { id, businessData }) => {
-    const filePath = path.join(app.getPath('userData'), `${id}.json`);
-    
-    // Save business data in structured format
-    fs.writeFileSync(filePath, JSON.stringify(businessData, null, 2));
+const getUserFilePath = (userId: string) =>
+    path.join(app.getPath('userData'), `${userId}_business.json`);
+
+ipcMain.handle('saveFile', async (_event, userId: string, businessData) => {
+    try {
+        const filePath = getUserFilePath(userId);
+        fs.writeFileSync(
+            filePath,
+            JSON.stringify(businessData, null, 2),
+            'utf-8',
+        );
+        return { success: true };
+    } catch (err) {
+        return { success: false, error: (err as Error).message };
+    }
 });
 
-// Read data from a file named by user ID
-ipcMain.handle('read-file', async (event, id) => {
-    const filePath = path.join(app.getPath('userData'), `${id}.json`);
-
-    if (fs.existsSync(filePath)) {
-        const rawData = fs.readFileSync(filePath, 'utf-8');
-        return JSON.parse(rawData);
+ipcMain.handle('readFile', async (_event, userId: string) => {
+    try {
+        const filePath = getUserFilePath(userId);
+        if (!fs.existsSync(filePath)) return {}; // No saved file yet
+        const content = fs.readFileSync(filePath, 'utf-8');
+        return JSON.parse(content);
+    } catch (err) {
+        return { error: (err as Error).message };
     }
-
-    return {};  // Return empty if file doesn't exist
 });
 
 app.on('window-all-closed', () => {

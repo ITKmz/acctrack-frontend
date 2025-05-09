@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Input, Button, Form, Select, DatePicker, Radio } from 'antd';
+import { Input, Button, Form, Select, DatePicker, Radio, Flex } from 'antd';
 import dayjs from 'dayjs';
 
 interface BusinessData {
@@ -17,7 +17,7 @@ interface BusinessData {
     registrationDate: string;
     vatRegistered: boolean;
     vatDetails: {
-        vatRegistrationDate?: string; // Changed to date
+        vatRegistrationDate?: string;
     };
 }
 
@@ -48,7 +48,24 @@ const BusinessForm: React.FC = () => {
     }, [userId]);
 
     const handleSaveData = async () => {
-        await window.electron.saveFile(userId, businessData); // Save data by user ID
+        if (
+            window?.electron &&
+            typeof window.electron.saveFile === 'function'
+        ) {
+            await window.electron.saveFile(userId, businessData);
+        } else {
+            const blob = new Blob([JSON.stringify(businessData, null, 2)], {
+                type: 'application/json',
+            });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'business_data.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
     };
 
     const handleInputChange = (
@@ -62,24 +79,54 @@ const BusinessForm: React.FC = () => {
     };
 
     const handleSelectChange = (value: string | boolean, field: string) => {
-        setBusinessData((prevData) => ({
-            ...prevData,
-            [field]: value,
-        }));
+        setBusinessData((prevData) => {
+            if (field === 'individualDetails') {
+                return {
+                    ...prevData,
+                    individualDetails: {
+                        ...prevData.individualDetails,
+                        type: value as string,
+                    },
+                };
+            } else if (field === 'juristicDetails') {
+                return {
+                    ...prevData,
+                    juristicDetails: {
+                        ...prevData.juristicDetails,
+                        type: value as string,
+                    },
+                };
+            } else {
+                return {
+                    ...prevData,
+                    [field]: value,
+                };
+            }
+        });
     };
 
     const handleDateChange = (date: any, field: string) => {
-        setBusinessData((prevData) => ({
-            ...prevData,
-            [field]: date ? dayjs(date).format('YYYY-MM-DD') : '', // Format as YYYY-MM-DD
-        }));
+        setBusinessData((prevData) => {
+            if (field.startsWith('vatDetails.')) {
+                const key = field.split('.')[1];
+                return {
+                    ...prevData,
+                    vatDetails: {
+                        ...prevData.vatDetails,
+                        [key]: date ? dayjs(date).format('YYYY-MM-DD') : '',
+                    },
+                };
+            }
+            return {
+                ...prevData,
+                [field]: date ? dayjs(date).format('YYYY-MM-DD') : '',
+            };
+        });
     };
 
     return (
         <div className="max-w-3xl w-[800px] p-4">
-            <h1 className="text-2xl font-semibold mb-6">
-                Business Registration Form
-            </h1>
+            <h1 className="text-2xl font-semibold mb-6">ข้อมูลกิจการ</h1>
 
             <Form layout="vertical" onFinish={handleSaveData}>
                 {/* Business Type */}
@@ -188,7 +235,7 @@ const BusinessForm: React.FC = () => {
                     rules={[
                         {
                             required: true,
-                            message: 'กรุณากรอกชื่อกิจการ', // "Please enter the business name"
+                            message: 'กรุณากรอกชื่อกิจการ',
                         },
                     ]}
                 >
@@ -265,9 +312,11 @@ const BusinessForm: React.FC = () => {
                 )}
 
                 <Form.Item>
-                    <Button type="primary" htmlType="submit" className="w-full">
-                        Save Business Data
-                    </Button>
+                    <Flex justify="flex-end">
+                        <Button type="primary" htmlType="submit" size="large">
+                            บันทึก
+                        </Button>
+                    </Flex>
                 </Form.Item>
             </Form>
         </div>

@@ -16,7 +16,7 @@ export default function DefaultLayout({
             <AppSidebar />
             <Layout>
                 <AppHeader />
-                <Layout className='px-6 pb-6'>
+                <Layout className="px-6 pb-6">
                     <Content className="p-6 mt-6 min-h-[280px] bg-white rounded-lg">
                         {children}
                     </Content>

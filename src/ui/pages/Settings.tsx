@@ -24,10 +24,10 @@ export default function SettingsPage() {
     return (
         <DefaultLayout>
             <Layout className="min-h-screen">
-                <Layout className='mx-auto'>
+                <Layout style={{ background: colorBgContainer }}>
                     <Sider
                         width={200}
-                        className="bg-white"
+                        className="bg-white border-r border-gray-200"
                         style={{ background: colorBgContainer }}
                     >
                         <h1 className="text-2xl font-bold p-4 bg-white">
