@@ -54,6 +54,28 @@ export interface QuotationData {
     updatedAt?: string;
 }
 
+export interface DataStorageSettings {
+    storageType: 'sqlite' | 'cloud';
+    autoBackup: boolean;
+    backupInterval: number; // in hours
+    databasePath?: string;
+}
+
+export interface MessageBoxOptions {
+    type?: 'none' | 'info' | 'error' | 'question' | 'warning';
+    title?: string;
+    message?: string;
+    detail?: string;
+    buttons?: string[];
+}
+
+export interface OpenDialogOptions {
+    title?: string;
+    defaultPath?: string;
+    properties?: Array<'openFile' | 'openDirectory' | 'multiSelections' | 'showHiddenFiles'>;
+    filters?: Array<{ name: string; extensions: string[] }>;
+}
+
 declare global {
     interface Window {
         electron: {
@@ -72,6 +94,15 @@ declare global {
             // Quotation operations
             saveQuotation: (data: QuotationData) => Promise<{ success: boolean; id?: string; error?: string }>;
             getQuotations: () => Promise<{ success: boolean; data?: QuotationData[]; error?: string }>;
+
+            // Storage settings operations
+            saveStorageSettings: (settings: DataStorageSettings) => Promise<{ success: boolean; error?: string }>;
+            getStorageSettings: () => Promise<DataStorageSettings | null>;
+            checkFolderForExistingData: (folderPath: string) => Promise<{ hasData: boolean; tableCount?: number; error?: string }>;
+            
+            // Dialog operations
+            showMessageBox: (options: MessageBoxOptions) => Promise<{ response: number; checkboxChecked?: boolean }>;
+            showOpenDialog: (options: OpenDialogOptions) => Promise<{ canceled: boolean; filePaths: string[] }>;
 
             // Legacy support (maintained for backward compatibility)
             saveFile: (

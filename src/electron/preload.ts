@@ -55,6 +55,28 @@ export interface QuotationData {
     updatedAt?: string;
 }
 
+export interface DataStorageSettings {
+    storageType: 'sqlite' | 'cloud';
+    autoBackup: boolean;
+    backupInterval: number; // in hours
+    databasePath?: string;
+}
+
+export interface MessageBoxOptions {
+    type?: 'none' | 'info' | 'error' | 'question' | 'warning';
+    title?: string;
+    message?: string;
+    detail?: string;
+    buttons?: string[];
+}
+
+export interface OpenDialogOptions {
+    title?: string;
+    defaultPath?: string;
+    properties?: Array<'openFile' | 'openDirectory' | 'multiSelections' | 'showHiddenFiles'>;
+    filters?: Array<{ name: string; extensions: string[] }>;
+}
+
 // Expose methods to the renderer process
 contextBridge.exposeInMainWorld('electron', {
     // Business data operations
@@ -78,6 +100,20 @@ contextBridge.exposeInMainWorld('electron', {
         ipcRenderer.invoke('saveQuotation', quotationData),
     getQuotations: () =>
         ipcRenderer.invoke('getQuotations'),
+
+    // Storage settings operations
+    saveStorageSettings: (settings: DataStorageSettings) =>
+        ipcRenderer.invoke('saveStorageSettings', settings),
+    getStorageSettings: () =>
+        ipcRenderer.invoke('getStorageSettings'),
+    checkFolderForExistingData: (folderPath: string) =>
+        ipcRenderer.invoke('checkFolderForExistingData', folderPath),
+    
+    // Dialog operations
+    showMessageBox: (options: MessageBoxOptions) =>
+        ipcRenderer.invoke('showMessageBox', options),
+    showOpenDialog: (options: OpenDialogOptions) =>
+        ipcRenderer.invoke('showOpenDialog', options),
 
     // Legacy support for existing components
     saveFile: (id: string, businessData: BusinessData) =>

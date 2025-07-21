@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Layout, Menu, theme } from 'antd';
 import DefaultLayout from '@/layouts/default';
 import BusinessForm from '@/components/settings/BusinessForm';
+import DataStorageForm from '@/components/settings/DataStorageForm';
 
 const { Sider, Content } = Layout;
 
@@ -15,6 +16,8 @@ export default function SettingsPage() {
         switch (selectedMenu) {
             case 'business':
                 return <BusinessForm />;
+            case 'storage':
+                return <DataStorageForm />;
             // Add more cases for other settings pages here
             default:
                 return <div>กรุณาเลือกเมนู</div>; // "Please select a menu"
@@ -39,11 +42,13 @@ export default function SettingsPage() {
                             onClick={({ key }) => setSelectedMenu(key)}
                             items={[
                                 { key: 'business', label: 'ข้อมูลกิจการ' }, // Business Info
-                                { key: 'other', label: 'ตั้งค่าอื่น ๆ' }, // Other Settings
+                                { key: 'storage', label: 'การจัดเก็บข้อมูล' }, // Data Storage
                             ]}
                         />
                     </Sider>
-                    {renderContent()}
+                    <Content className="p-6">
+                        {renderContent()}
+                    </Content>
                 </Layout>
             </Layout>
         </DefaultLayout>

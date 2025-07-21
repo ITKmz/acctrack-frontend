@@ -60,8 +60,26 @@ class Database {
     private db: sqlite3.Database | null = null;
     private dbPath: string;
 
-    constructor() {
-        this.dbPath = path.join(app.getPath('userData'), 'acctrack.db');
+    constructor(customPath?: string) {
+        if (customPath) {
+            this.dbPath = path.join(customPath, 'acctrack.db');
+        } else {
+            this.dbPath = path.join(app.getPath('userData'), 'acctrack.db');
+        }
+    }
+
+    // Method to change database path (requires re-initialization)
+    async changeDatabasePath(newPath: string): Promise<void> {
+        // Close current database connection
+        if (this.db) {
+            await this.close();
+        }
+        
+        // Update path
+        this.dbPath = path.join(newPath, 'acctrack.db');
+        
+        // Re-initialize with new path
+        await this.initialize();
     }
 
     async initialize(): Promise<void> {

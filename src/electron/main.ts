@@ -4,14 +4,35 @@ import fs from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { database } from './database/db.js';
+import sqlite3 from 'sqlite3';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 app.on('ready', async () => {
-    // Initialize database
+    // Load storage settings first
+    let customDatabasePath: string | undefined;
     try {
-        await database.initialize();
+        const settingsPath = path.join(app.getPath('userData'), 'storage-settings.json');
+        if (fs.existsSync(settingsPath)) {
+            const data = await fs.promises.readFile(settingsPath, 'utf-8');
+            const settings = JSON.parse(data);
+            if (settings.storageType === 'sqlite' && settings.databasePath) {
+                customDatabasePath = settings.databasePath;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading storage settings:', error);
+    }
+
+    // Initialize database with custom path if specified
+    try {
+        if (customDatabasePath) {
+            console.log('Using custom database path:', customDatabasePath);
+            await database.changeDatabasePath(customDatabasePath);
+        } else {
+            await database.initialize();
+        }
     } catch (error) {
         console.error('Failed to initialize database:', error);
         app.quit();
@@ -111,6 +132,94 @@ ipcMain.handle('getQuotations', async (_event) => {
         return { success: true, data: quotations };
     } catch (err) {
         return { success: false, error: (err as Error).message };
+    }
+});
+
+// Storage Settings IPC Handlers
+ipcMain.handle('saveStorageSettings', async (_event, settings) => {
+    try {
+        const settingsPath = path.join(app.getPath('userData'), 'storage-settings.json');
+        await fs.promises.writeFile(settingsPath, JSON.stringify(settings, null, 2));
+        
+        // If SQLite storage type and custom path is specified, update database path
+        if (settings.storageType === 'sqlite' && settings.databasePath) {
+            try {
+                await database.changeDatabasePath(settings.databasePath);
+                console.log('Database path changed to:', settings.databasePath);
+            } catch (dbError) {
+                console.error('Error changing database path:', dbError);
+                return { success: false, error: 'Failed to change database path: ' + (dbError as Error).message };
+            }
+        }
+        
+        return { success: true };
+    } catch (err) {
+        return { success: false, error: (err as Error).message };
+    }
+});
+
+ipcMain.handle('getStorageSettings', async (_event) => {
+    try {
+        const settingsPath = path.join(app.getPath('userData'), 'storage-settings.json');
+        if (fs.existsSync(settingsPath)) {
+            const data = await fs.promises.readFile(settingsPath, 'utf-8');
+            return JSON.parse(data);
+        }
+        return null; // Return null if no settings file exists
+    } catch (err) {
+        console.error('Error loading storage settings:', err);
+        return null;
+    }
+});
+
+// Check if folder contains existing data
+ipcMain.handle('checkFolderForExistingData', async (_event, folderPath) => {
+    try {
+        const dbPath = path.join(folderPath, 'acctrack.db');
+        if (fs.existsSync(dbPath)) {
+            // Check if database has any data
+            return new Promise((resolve) => {
+                const testDb = new sqlite3.Database(dbPath, sqlite3.OPEN_READONLY, (err) => {
+                    if (err) {
+                        resolve({ hasData: false, error: err.message });
+                        return;
+                    }
+                    
+                    // Check if there are any tables with data
+                    testDb.get("SELECT COUNT(*) as count FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'", (err, row: any) => {
+                        if (err) {
+                            resolve({ hasData: false, error: err.message });
+                        } else {
+                            const hasData = row && row.count > 0;
+                            resolve({ hasData, tableCount: row?.count || 0 });
+                        }
+                        testDb.close();
+                    });
+                });
+            });
+        }
+        return { hasData: false };
+    } catch (err) {
+        return { hasData: false, error: (err as Error).message };
+    }
+});
+
+// Dialog IPC Handlers
+ipcMain.handle('showMessageBox', async (_event, options) => {
+    try {
+        const result = await dialog.showMessageBox(options);
+        return result;
+    } catch (err) {
+        return { response: -1, error: (err as Error).message };
+    }
+});
+
+ipcMain.handle('showOpenDialog', async (_event, options) => {
+    try {
+        const result = await dialog.showOpenDialog(options);
+        return result;
+    } catch (err) {
+        return { canceled: true, filePaths: [], error: (err as Error).message };
     }
 });
 
