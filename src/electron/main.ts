@@ -223,6 +223,46 @@ ipcMain.handle('showOpenDialog', async (_event, options) => {
     }
 });
 
+// Recent folders handlers
+ipcMain.handle('getRecentFolders', async (_event) => {
+    try {
+        const recentFoldersPath = path.join(app.getPath('userData'), 'recent-folders.json');
+        if (fs.existsSync(recentFoldersPath)) {
+            const data = await fs.promises.readFile(recentFoldersPath, 'utf-8');
+            return JSON.parse(data) || [];
+        }
+        return [];
+    } catch (error) {
+        console.error('Error loading recent folders:', error);
+        return [];
+    }
+});
+
+ipcMain.handle('addToRecentFolders', async (_event, folderPath: string) => {
+    try {
+        const recentFoldersPath = path.join(app.getPath('userData'), 'recent-folders.json');
+        let recentFolders: string[] = [];
+        
+        // Load existing recent folders
+        if (fs.existsSync(recentFoldersPath)) {
+            const data = await fs.promises.readFile(recentFoldersPath, 'utf-8');
+            recentFolders = JSON.parse(data) || [];
+        }
+        
+        // Remove if already exists and add to the beginning
+        recentFolders = recentFolders.filter(folder => folder !== folderPath);
+        recentFolders.unshift(folderPath);
+        
+        // Keep only the last 10 folders
+        recentFolders = recentFolders.slice(0, 10);
+        
+        // Save updated list
+        await fs.promises.writeFile(recentFoldersPath, JSON.stringify(recentFolders, null, 2));
+    } catch (error) {
+        console.error('Error saving recent folders:', error);
+    }
+});
+
 app.on('window-all-closed', async () => {
     await database.close();
     if (process.platform !== 'darwin') app.quit();

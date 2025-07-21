@@ -55,10 +55,11 @@ export interface QuotationData {
 }
 
 export interface DataStorageSettings {
-    storageType: 'sqlite' | 'cloud';
+    storageType: 'sqlite' | 'cloud' | 'localStorage';
     autoBackup: boolean;
     backupInterval: number; // in hours
     databasePath?: string;
+    isDevelopment?: boolean;
 }
 
 export interface MessageBoxOptions {
@@ -100,6 +101,9 @@ declare global {
             getStorageSettings: () => Promise<DataStorageSettings | null>;
             checkFolderForExistingData: (folderPath: string) => Promise<{ hasData: boolean; tableCount?: number; error?: string }>;
             
+            // Recent folders operations
+            getRecentFolders: () => Promise<string[]>;
+            addToRecentFolders: (folderPath: string) => Promise<void>;
             // Dialog operations
             showMessageBox: (options: MessageBoxOptions) => Promise<{ response: number; checkboxChecked?: boolean }>;
             showOpenDialog: (options: OpenDialogOptions) => Promise<{ canceled: boolean; filePaths: string[] }>;

@@ -109,6 +109,11 @@ contextBridge.exposeInMainWorld('electron', {
     checkFolderForExistingData: (folderPath: string) =>
         ipcRenderer.invoke('checkFolderForExistingData', folderPath),
     
+    // Recent folders operations
+    getRecentFolders: () =>
+        ipcRenderer.invoke('getRecentFolders'),
+    addToRecentFolders: (folderPath: string) =>
+        ipcRenderer.invoke('addToRecentFolders', folderPath),
     // Dialog operations
     showMessageBox: (options: MessageBoxOptions) =>
         ipcRenderer.invoke('showMessageBox', options),

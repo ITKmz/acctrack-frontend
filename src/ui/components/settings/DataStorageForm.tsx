@@ -1,15 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Radio, Button, Card, Alert, Space, Typography, Divider, Switch, Input } from 'antd';
 import { DatabaseOutlined, CloudOutlined, FolderOpenOutlined } from '@ant-design/icons';
+import { DataStorageSettings } from '../../../types/renderer';
 
 const { Title, Text, Paragraph } = Typography;
-
-interface DataStorageSettings {
-    storageType: 'sqlite' | 'cloud';
-    autoBackup: boolean;
-    backupInterval: number; // in hours
-    databasePath?: string;
-}
 
 const DataStorageForm: React.FC = () => {
     const [form] = Form.useForm();
@@ -19,6 +13,9 @@ const DataStorageForm: React.FC = () => {
         backupInterval: 24,
     });
     const [loading, setLoading] = useState(false);
+    
+    // Check if we're in development mode
+    const isDevelopment = import.meta.env.DEV;
 
     // Load current settings when component mounts
     useEffect(() => {
@@ -35,7 +32,7 @@ const DataStorageForm: React.FC = () => {
                 }
             } else {
                 // Fallback for web - load from localStorage
-                const saved = localStorage.getItem('storageSettings');
+                const saved = localStorage.getItem('acctrack-storage-settings');
                 if (saved) {
                     const parsedSettings = JSON.parse(saved);
                     setSettings(parsedSettings);
@@ -55,7 +52,7 @@ const DataStorageForm: React.FC = () => {
                 await window.electron.saveStorageSettings(values);
             } else {
                 // Fallback for web
-                localStorage.setItem('storageSettings', JSON.stringify(values));
+                localStorage.setItem('acctrack-storage-settings', JSON.stringify(values));
             }
             
             setSettings(values);
@@ -112,6 +109,12 @@ const DataStorageForm: React.FC = () => {
                     description: 'เก็บข้อมูลในฐานข้อมูล SQLite ในเครื่อง ให้ประสิทธิภาพสูงและความเสถียร คุณสามารถเลือกตำแหน่งที่ต้องการเก็บไฟล์ฐานข้อมูลได้',
                     icon: <DatabaseOutlined />
                 };
+            case 'localStorage':
+                return {
+                    title: 'localStorage (สำหรับพัฒนา)',
+                    description: 'เก็บข้อมูลใน localStorage ของเบราว์เซอร์ เหมาะสำหรับการพัฒนาและทดสอบเท่านั้น',
+                    icon: <DatabaseOutlined />
+                };
             case 'cloud':
                 return {
                     title: 'Cloud Storage (กำลังพัฒนา)',
@@ -140,7 +143,7 @@ const DataStorageForm: React.FC = () => {
                 <Form.Item name="storageType" label="ประเภทการจัดเก็บข้อมูล">
                     <Radio.Group className="w-full">
                         <Space direction="vertical" className="w-full" size="large">
-                            {['sqlite', 'cloud'].map((type) => {
+                            {['sqlite', ...(isDevelopment ? ['localStorage'] : []), 'cloud'].map((type) => {
                                 const info = getStorageDescription(type);
                                 if (!info) return null;
 
@@ -149,7 +152,7 @@ const DataStorageForm: React.FC = () => {
                                         key={type}
                                         className={`cursor-pointer transition-all duration-200 hover:shadow-md ${
                                             settings.storageType === type ? 'border-blue-500 shadow-md' : ''
-                                        }`}
+                                        } ${type === 'localStorage' ? 'border-orange-200 bg-orange-50' : ''}`}
                                         onClick={() => {
                                             form.setFieldValue('storageType', type);
                                             setSettings(prev => ({ ...prev, storageType: type as any }));

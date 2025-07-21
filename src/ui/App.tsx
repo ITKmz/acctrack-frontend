@@ -12,6 +12,11 @@ import ProductListPage from '@/pages/ProductList';
 import ProductCategoriesPage from '@/pages/ProductCategories';
 import FirstTimeSetup from '@/components/FirstTimeSetup';
 
+// Import dev mode utilities in development
+if (import.meta.env.DEV) {
+    import('@/utils/devMode');
+}
+
 function App() {
     const [showFirstTimeSetup, setShowFirstTimeSetup] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
@@ -24,15 +29,17 @@ function App() {
     const checkFirstTimeSetup = async () => {
         try {
             if (window?.electron?.getStorageSettings) {
+                // Running in Electron
                 const settings = await window.electron.getStorageSettings();
                 if (!settings) {
-                    // No settings found, show first-time setup
                     setShowFirstTimeSetup(true);
                 }
             } else {
-                // Fallback for web - check localStorage
-                const settings = localStorage.getItem('storageSettings');
-                if (!settings) {
+                // Running in browser - check localStorage
+                const setupCompleted = localStorage.getItem('acctrack-setup-completed');
+                const storageSettings = localStorage.getItem('acctrack-storage-settings');
+                
+                if (!setupCompleted || !storageSettings) {
                     setShowFirstTimeSetup(true);
                 }
             }
