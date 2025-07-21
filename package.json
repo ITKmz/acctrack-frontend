@@ -8,6 +8,7 @@
     "main": "dist-electron/main.js",
     "scripts": {
         "preinstall": "npx only-allow pnpm",
+        "postinstall": "electron-rebuild",
         "dev:react": "vite",
         "dev:electron": "electron .",
         "build": "tsc && vite build",
@@ -32,6 +33,7 @@
         "react-hook-form": "^7.54.2",
         "react-icons": "^5.4.0",
         "react-router-dom": "^7.1.5",
+        "sqlite3": "^5.1.7",
         "tailwindcss": "^4.0.5",
         "vite-tsconfig-paths": "^5.1.4"
     },
@@ -43,6 +45,7 @@
         "@vitejs/plugin-react-swc": "^3.8.0",
         "electron": "^35.0.3",
         "electron-builder": "^25.1.8",
+        "electron-rebuild": "3.2.9",
         "eslint": "^9.20.0",
         "eslint-config-prettier": "^10.1.1",
         "eslint-plugin-prettier": "^5.2.3",

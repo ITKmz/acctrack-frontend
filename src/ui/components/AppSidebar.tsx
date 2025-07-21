@@ -3,7 +3,7 @@ import { Layout, Menu, theme } from 'antd';
 import {
     HomeOutlined,
     DollarCircleOutlined,
-    ShoppingCartOutlined,
+    BoxPlotOutlined,
     FileTextOutlined,
     SettingOutlined,
 } from '@ant-design/icons';
@@ -22,16 +22,42 @@ const items: MenuProps['items'] = [
         key: 'income',
         icon: <DollarCircleOutlined className="text-[32px]" />,
         label: <span className="text-base">รายรับ</span>, // Income
+        children: [
+            {
+                key: 'income/quotations',
+                label: <span className="text-sm">ใบเสนอราคา</span>, // Quotation
+            },
+            {
+                key: 'income/invoices',
+                label: <span className="text-sm">ใบแจ้งหนี้</span>, // Invoice
+            },
+        ],
     },
     {
         key: 'expenses',
         icon: <FileTextOutlined className="text-[32px]" />,
         label: <span className="text-base">รายจ่าย</span>, // Expenses
+        children: [
+            {
+                key: 'expenses/purchase-orders',
+                label: <span className="text-sm">ใบสั่งซื้อ</span>, // Purchase Order
+            },
+        ],
     },
     {
         key: 'products',
-        icon: <ShoppingCartOutlined className="text-[32px]" />,
+        icon: <BoxPlotOutlined className="text-[32px]" />,
         label: <span className="text-base">สินค้า</span>, // Products
+        children: [
+            {
+                key: 'products/list',
+                label: <span className="text-sm">รายการสินค้า</span>, // Product List
+            },
+            {
+                key: 'products/categories',
+                label: <span className="text-sm">หมวดหมู่สินค้า</span>, // Product Categories
+            },
+        ],
     },
     {
         key: 'settings',
@@ -58,8 +84,10 @@ const AppSidebar: React.FC = () => {
                 <h1 className="text-2xl font-bold">AccTrack</h1>
             </div>
             <Menu
-                mode="inline"
+                mode="vertical"
+                triggerSubMenuAction="hover"
                 onClick={({ key }) => {
+                    // Always navigate when clicking on any menu item
                     navigate(`/${key}`);
                 }}
                 defaultSelectedKeys={['home']}
