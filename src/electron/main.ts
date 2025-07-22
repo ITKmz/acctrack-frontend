@@ -116,26 +116,6 @@ ipcMain.handle('deleteProduct', async (_event, id: string) => {
     }
 });
 
-// Quotation IPC Handlers
-ipcMain.handle('saveQuotation', async (_event, quotationData) => {
-    try {
-        const result = await database.saveQuotation(quotationData);
-        return result;
-    } catch (err) {
-        return { success: false, error: (err as Error).message };
-    }
-});
-
-ipcMain.handle('getQuotations', async (_event) => {
-    try {
-        const quotations = await database.getQuotations();
-        return { success: true, data: quotations };
-    } catch (error) {
-        console.error('Error getting quotations:', error);
-        return { success: false, error: (error as Error).message };
-    }
-});
-
 // Contact Address Data handlers
 ipcMain.handle('saveContactData', async (_event, contactData) => {
     try {

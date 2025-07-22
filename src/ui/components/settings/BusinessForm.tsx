@@ -55,6 +55,8 @@ const BusinessForm: React.FC = () => {
             const result = await saveBusinessData(formData);
             if (result.success) {
                 setIsEditing(false);
+                // Dispatch custom event to notify other components
+                window.dispatchEvent(new CustomEvent('businessDataUpdated'));
                 // Success message is handled by the hook
             } else {
                 console.error('Failed to save:', result.error);

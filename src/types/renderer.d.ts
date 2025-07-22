@@ -35,25 +35,6 @@ export interface ProductData {
     updatedAt?: string;
 }
 
-export interface QuotationData {
-    id?: string;
-    quotationNumber: string;
-    customerName: string;
-    customerAddress?: string;
-    items: Array<{
-        description: string;
-        quantity: number;
-        unitPrice: number;
-        amount: number;
-    }>;
-    subtotal: number;
-    vat?: number;
-    total: number;
-    status: 'draft' | 'sent' | 'approved' | 'rejected';
-    createdAt?: string;
-    updatedAt?: string;
-}
-
 export interface ContactAddressData {
     id?: string;
     // ที่อยู่
@@ -114,10 +95,6 @@ declare global {
             updateProduct: (id: string, data: Partial<ProductData>) => Promise<{ success: boolean; error?: string }>;
             deleteProduct: (id: string) => Promise<{ success: boolean; error?: string }>;
             
-            // Quotation operations
-            saveQuotation: (data: QuotationData) => Promise<{ success: boolean; id?: string; error?: string }>;
-            getQuotations: () => Promise<{ success: boolean; data?: QuotationData[]; error?: string }>;
-
             // Contact Address operations
             saveContactData: (data: ContactAddressData) => Promise<{ success: boolean; id?: string; error?: string }>;
             getContactData: () => Promise<{ success: boolean; data?: ContactAddressData; error?: string }>;

@@ -25,25 +25,6 @@ export interface BusinessData {
     updatedAt?: string;
 }
 
-export interface QuotationData {
-    id?: string;
-    quotationNumber: string;
-    customerName: string;
-    customerAddress?: string;
-    items: Array<{
-        description: string;
-        quantity: number;
-        unitPrice: number;
-        amount: number;
-    }>;
-    subtotal: number;
-    vat?: number;
-    total: number;
-    status: 'draft' | 'sent' | 'approved' | 'rejected';
-    createdAt?: string;
-    updatedAt?: string;
-}
-
 export interface ProductData {
     id?: string;
     name: string;
@@ -140,21 +121,6 @@ class Database {
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
 
-            -- Quotations table
-            CREATE TABLE IF NOT EXISTS quotations (
-                id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-                quotation_number TEXT UNIQUE NOT NULL,
-                customer_name TEXT NOT NULL,
-                customer_address TEXT,
-                items TEXT NOT NULL, -- JSON string
-                subtotal REAL NOT NULL,
-                vat REAL DEFAULT 0,
-                total REAL NOT NULL,
-                status TEXT DEFAULT 'draft',
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            );
-
             -- Products table
             CREATE TABLE IF NOT EXISTS products (
                 id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
@@ -164,40 +130,6 @@ class Database {
                 unit_price REAL NOT NULL,
                 stock INTEGER DEFAULT 0,
                 min_stock INTEGER DEFAULT 0,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-            );
-
-            -- Invoices table
-            CREATE TABLE IF NOT EXISTS invoices (
-                id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-                invoice_number TEXT UNIQUE NOT NULL,
-                quotation_id TEXT,
-                customer_name TEXT NOT NULL,
-                customer_address TEXT,
-                items TEXT NOT NULL, -- JSON string
-                subtotal REAL NOT NULL,
-                vat REAL DEFAULT 0,
-                total REAL NOT NULL,
-                status TEXT DEFAULT 'pending',
-                due_date TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY (quotation_id) REFERENCES quotations(id)
-            );
-
-            -- Purchase orders table
-            CREATE TABLE IF NOT EXISTS purchase_orders (
-                id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-                po_number TEXT UNIQUE NOT NULL,
-                supplier_name TEXT NOT NULL,
-                supplier_address TEXT,
-                items TEXT NOT NULL, -- JSON string
-                subtotal REAL NOT NULL,
-                vat REAL DEFAULT 0,
-                total REAL NOT NULL,
-                status TEXT DEFAULT 'pending',
-                delivery_date TEXT,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
@@ -418,68 +350,6 @@ class Database {
                 } else {
                     resolve({ success: true });
                 }
-            });
-        });
-    }
-
-    // Quotation Operations
-    async saveQuotation(data: QuotationData): Promise<{ success: boolean; id?: string; error?: string }> {
-        if (!this.db) throw new Error('Database not initialized');
-
-        const sql = `
-            INSERT INTO quotations (quotation_number, customer_name, customer_address, items, subtotal, vat, total, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        `;
-
-        return new Promise((resolve) => {
-            this.db!.run(sql, [
-                data.quotationNumber,
-                data.customerName,
-                data.customerAddress || null,
-                JSON.stringify(data.items),
-                data.subtotal,
-                data.vat || 0,
-                data.total,
-                data.status || 'draft'
-            ], function(err) {
-                if (err) {
-                    console.error('Error saving quotation:', err);
-                    resolve({ success: false, error: err.message });
-                } else {
-                    resolve({ success: true, id: this.lastID?.toString() });
-                }
-            });
-        });
-    }
-
-    async getQuotations(): Promise<QuotationData[]> {
-        if (!this.db) throw new Error('Database not initialized');
-
-        const sql = 'SELECT * FROM quotations ORDER BY created_at DESC';
-
-        return new Promise((resolve, reject) => {
-            this.db!.all(sql, [], (err, rows: any[]) => {
-                if (err) {
-                    console.error('Error getting quotations:', err);
-                    reject(err);
-                    return;
-                }
-
-                const quotations: QuotationData[] = rows.map(row => ({
-                    id: row.id,
-                    quotationNumber: row.quotation_number,
-                    customerName: row.customer_name,
-                    customerAddress: row.customer_address,
-                    items: JSON.parse(row.items),
-                    subtotal: row.subtotal,
-                    vat: row.vat,
-                    total: row.total,
-                    status: row.status as QuotationData['status'],
-                    createdAt: row.created_at,
-                    updatedAt: row.updated_at
-                }));
-
-                resolve(quotations);
             });
         });
     }

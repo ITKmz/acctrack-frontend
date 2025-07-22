@@ -36,25 +36,6 @@ export interface ProductData {
     updatedAt?: string;
 }
 
-export interface QuotationData {
-    id?: string;
-    quotationNumber: string;
-    customerName: string;
-    customerAddress?: string;
-    items: Array<{
-        description: string;
-        quantity: number;
-        unitPrice: number;
-        amount: number;
-    }>;
-    subtotal: number;
-    vat?: number;
-    total: number;
-    status: 'draft' | 'sent' | 'approved' | 'rejected';
-    createdAt?: string;
-    updatedAt?: string;
-}
-
 export interface DataStorageSettings {
     storageType: 'sqlite' | 'cloud';
     autoBackup: boolean;
@@ -94,12 +75,6 @@ contextBridge.exposeInMainWorld('electron', {
         ipcRenderer.invoke('updateProduct', { id, data }),
     deleteProduct: (id: string) =>
         ipcRenderer.invoke('deleteProduct', id),
-
-    // Quotation operations
-    saveQuotation: (quotationData: QuotationData) =>
-        ipcRenderer.invoke('saveQuotation', quotationData),
-    getQuotations: () =>
-        ipcRenderer.invoke('getQuotations'),
 
     // Contact Address operations  
     saveContactData: (contactData: any) =>

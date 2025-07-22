@@ -83,8 +83,7 @@ export const DevModeUtils = {
             'acctrack-storage-settings',
             'acctrack-setup-completed',
             'acctrack-business-data',
-            'acctrack-products',
-            'acctrack-quotations'
+            'acctrack-products'
         ];
 
         keys.forEach(key => {
@@ -106,7 +105,6 @@ export const DevModeUtils = {
         console.log('- Setup Completed:', localStorage.getItem('acctrack-setup-completed'));
         console.log('- Business Data:', !!localStorage.getItem('acctrack-business-data'));
         console.log('- Products:', !!localStorage.getItem('acctrack-products'));
-        console.log('- Quotations:', !!localStorage.getItem('acctrack-quotations'));
     }
 };
 
