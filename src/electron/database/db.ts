@@ -56,6 +56,26 @@ export interface ProductData {
     updatedAt?: string;
 }
 
+export interface ContactData {
+    id?: string;
+    building?: string;           // อาคาร
+    roomNumber?: string;         // ห้องเลขที่
+    floor?: string;             // ชั้นที่
+    village?: string;           // หมู่บ้าน
+    houseNumber: string;        // บ้านเลขที่* (required)
+    moo?: string;               // หมู่ที่
+    soi?: string;               // ซอย/ตรอก
+    road?: string;              // ถนน
+    subDistrict: string;        // แขวง/ตำบล* (required)
+    district: string;           // เขต/อำเภอ* (required)
+    province: string;           // จังหวัด* (required)
+    country: string;            // ประเทศ* (required)
+    postalCode: string;         // รหัสไปรษณีย์* (required)
+    phoneNumber: string;        // required
+    createdAt?: string;
+    updatedAt?: string;
+}
+
 class Database {
     private db: sqlite3.Database | null = null;
     private dbPath: string;
@@ -178,6 +198,27 @@ class Database {
                 total REAL NOT NULL,
                 status TEXT DEFAULT 'pending',
                 delivery_date TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            );
+
+            -- Contact data table
+            CREATE TABLE IF NOT EXISTS contact_data (
+                id TEXT PRIMARY KEY DEFAULT 'default',
+                building TEXT,
+                room_number TEXT,
+                floor TEXT,
+                village TEXT,
+                house_number TEXT NOT NULL,
+                moo TEXT,
+                soi TEXT,
+                road TEXT,
+                sub_district TEXT NOT NULL,
+                district TEXT NOT NULL,
+                province TEXT NOT NULL,
+                country TEXT NOT NULL,
+                postal_code TEXT NOT NULL,
+                phone_number TEXT NOT NULL,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
@@ -439,6 +480,91 @@ class Database {
                 }));
 
                 resolve(quotations);
+            });
+        });
+    }
+
+    // Contact Data Operations
+    async saveContactData(data: ContactData): Promise<{ success: boolean; error?: string }> {
+        if (!this.db) throw new Error('Database not initialized');
+
+        const sql = `
+            INSERT OR REPLACE INTO contact_data (
+                id, building, room_number, floor, village, house_number, moo, soi, road,
+                sub_district, district, province, country, postal_code, phone_number, updated_at
+            ) VALUES ('default', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+        `;
+
+        return new Promise((resolve) => {
+            this.db!.run(sql, [
+                data.building || null,
+                data.roomNumber || null,
+                data.floor || null,
+                data.village || null,
+                data.houseNumber,
+                data.moo || null,
+                data.soi || null,
+                data.road || null,
+                data.subDistrict,
+                data.district,
+                data.province,
+                data.country,
+                data.postalCode,
+                data.phoneNumber
+            ], function (err) {
+                if (err) {
+                    console.error('Error saving contact data:', err);
+                    resolve({ success: false, error: err.message });
+                } else {
+                    resolve({ success: true });
+                }
+            });
+        });
+    }
+
+    async getContactData(): Promise<ContactData | null> {
+        if (!this.db) throw new Error('Database not initialized');
+
+        const sql = 'SELECT * FROM contact_data WHERE id = ? ORDER BY updated_at DESC LIMIT 1';
+
+        return new Promise((resolve, reject) => {
+            this.db!.get(sql, ['default'], (err, row: any) => {
+                if (err) {
+                    console.error('Error getting contact data:', err);
+                    reject(err);
+                    return;
+                }
+
+                if (!row) {
+                    resolve(null);
+                    return;
+                }
+
+                try {
+                    const contactData: ContactData = {
+                        id: row.id,
+                        building: row.building,
+                        roomNumber: row.room_number,
+                        floor: row.floor,
+                        village: row.village,
+                        houseNumber: row.house_number,
+                        moo: row.moo,
+                        soi: row.soi,
+                        road: row.road,
+                        subDistrict: row.sub_district,
+                        district: row.district,
+                        province: row.province,
+                        country: row.country,
+                        postalCode: row.postal_code,
+                        phoneNumber: row.phone_number,
+                        createdAt: row.created_at,
+                        updatedAt: row.updated_at
+                    };
+                    resolve(contactData);
+                } catch (parseErr) {
+                    console.error('Error parsing contact data:', parseErr);
+                    reject(parseErr);
+                }
             });
         });
     }

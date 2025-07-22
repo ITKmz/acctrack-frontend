@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Layout, Menu, theme } from 'antd';
+import { Layout, Menu, theme, Divider } from 'antd';
 import DefaultLayout from '@/layouts/default';
 import BusinessForm from '@/components/settings/BusinessForm';
 import DataStorageForm from '@/components/settings/DataStorageForm';
+import ContactAddressForm from '@/components/settings/ContactAddressForm';
 
 const { Sider, Content } = Layout;
 
@@ -15,7 +16,11 @@ export default function SettingsPage() {
     const renderContent = () => {
         switch (selectedMenu) {
             case 'business':
-                return <BusinessForm />;
+                return <>
+                        <BusinessForm />
+                        <Divider />
+                        <ContactAddressForm />
+                        </>;
             case 'storage':
                 return <DataStorageForm />;
             // Add more cases for other settings pages here

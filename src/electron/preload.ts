@@ -101,6 +101,12 @@ contextBridge.exposeInMainWorld('electron', {
     getQuotations: () =>
         ipcRenderer.invoke('getQuotations'),
 
+    // Contact Address operations  
+    saveContactData: (contactData: any) =>
+        ipcRenderer.invoke('saveContactData', contactData),
+    getContactData: () =>
+        ipcRenderer.invoke('getContactData'),
+
     // Storage settings operations
     saveStorageSettings: (settings: DataStorageSettings) =>
         ipcRenderer.invoke('saveStorageSettings', settings),

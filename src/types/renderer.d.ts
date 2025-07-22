@@ -54,6 +54,28 @@ export interface QuotationData {
     updatedAt?: string;
 }
 
+export interface ContactAddressData {
+    id?: string;
+    // ที่อยู่
+    building?: string;           // อาคาร
+    roomNumber?: string;         // ห้องเลขที่
+    floor?: string;             // ชั้นที่
+    village?: string;           // หมู่บ้าน
+    houseNumber: string;        // บ้านเลขที่* (required)
+    moo?: string;               // หมู่ที่
+    soi?: string;               // ซอย/ตรอก
+    road?: string;              // ถนน
+    subDistrict: string;        // แขวง/ตำบล* (required)
+    district: string;           // เขต/อำเภอ* (required)
+    province: string;           // จังหวัด* (required)
+    country: string;            // ประเทศ* (required)
+    postalCode: string;         // รหัสไปรษณีย์* (required)
+    // เบอร์โทรศัพท์
+    phoneNumber: string;        // required
+    createdAt?: string;
+    updatedAt?: string;
+}
+
 export interface DataStorageSettings {
     storageType: 'sqlite' | 'cloud' | 'localStorage';
     autoBackup: boolean;
@@ -95,6 +117,10 @@ declare global {
             // Quotation operations
             saveQuotation: (data: QuotationData) => Promise<{ success: boolean; id?: string; error?: string }>;
             getQuotations: () => Promise<{ success: boolean; data?: QuotationData[]; error?: string }>;
+
+            // Contact Address operations
+            saveContactData: (data: ContactAddressData) => Promise<{ success: boolean; id?: string; error?: string }>;
+            getContactData: () => Promise<{ success: boolean; data?: ContactAddressData; error?: string }>;
 
             // Storage settings operations
             saveStorageSettings: (settings: DataStorageSettings) => Promise<{ success: boolean; error?: string }>;

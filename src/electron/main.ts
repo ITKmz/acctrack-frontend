@@ -130,8 +130,30 @@ ipcMain.handle('getQuotations', async (_event) => {
     try {
         const quotations = await database.getQuotations();
         return { success: true, data: quotations };
-    } catch (err) {
-        return { success: false, error: (err as Error).message };
+    } catch (error) {
+        console.error('Error getting quotations:', error);
+        return { success: false, error: (error as Error).message };
+    }
+});
+
+// Contact Address Data handlers
+ipcMain.handle('saveContactData', async (_event, contactData) => {
+    try {
+        const result = await database.saveContactData(contactData);
+        return { success: true, id: result };
+    } catch (error) {
+        console.error('Error saving contact data:', error);
+        return { success: false, error: (error as Error).message };
+    }
+});
+
+ipcMain.handle('getContactData', async (_event) => {
+    try {
+        const contactData = await database.getContactData();
+        return { success: true, data: contactData };
+    } catch (error) {
+        console.error('Error getting contact data:', error);
+        return { success: false, error: (error as Error).message };
     }
 });
 
