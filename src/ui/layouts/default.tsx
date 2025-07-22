@@ -12,16 +12,16 @@ export default function DefaultLayout({
     children: React.ReactNode;
 }) {
     return (
-        <Layout>
+        <Layout className="h-screen">
             <AppSidebar />
-            <Layout>
+            <Layout className="flex flex-col">
                 <AppHeader />
-                <Layout className="px-6 pb-6">
-                    <Content className="p-6 mt-6 min-h-[280px] bg-white rounded-lg">
+                <Content className="flex-1 overflow-auto px-6 pb-6 inset-shadow-sm">
+                    <div className="p-6 mt-6 min-h-[280px] bg-white rounded-lg shadow-md">
                         {children}
-                    </Content>
+                    </div>
                     <AppFooter />
-                </Layout>
+                </Content>
             </Layout>
         </Layout>
     );

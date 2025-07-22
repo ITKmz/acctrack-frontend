@@ -137,7 +137,7 @@ const AppHeader: React.FC = () => {
     return (
         <Header
             style={{ background: colorBgContainer }}
-            className="flex items-center"
+            className="flex items-center sticky top-0 z-10"
         >
             <Flex justify='start' align='center' className="w-full">
                 <BsBuildings size={32} />
