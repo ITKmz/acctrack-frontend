@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, Menu } from 'electron';
 import path from 'path';
 import fs from 'fs';
 import { fileURLToPath } from 'url';
@@ -52,6 +52,8 @@ app.on('ready', async () => {
 
     win.maximize(); // ✅ Open in maximized window mode
     win.show(); // ✅ Show the window after maximizing
+
+    Menu.setApplicationMenu(null); // Disable the default menu
 
     if (process.env.NODE_ENV === 'development') {
         win.loadURL('http://localhost:5173');
