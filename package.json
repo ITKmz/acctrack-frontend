@@ -10,7 +10,7 @@
         "preinstall": "npx only-allow pnpm",
         "postinstall": "electron-rebuild",
         "dev:react": "vite",
-        "dev:electron": "electron .",
+        "dev:electron": "pnpm run transpile && electron .",
         "build": "tsc && vite build",
         "lint": "eslint .",
         "format": "prettier --write .",

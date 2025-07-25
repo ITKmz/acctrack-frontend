@@ -53,6 +53,19 @@ app.on('ready', async () => {
     win.maximize(); // ✅ Open in maximized window mode
     win.show(); // ✅ Show the window after maximizing
 
+    // Add keyboard shortcuts for DevTools
+    win.webContents.on('before-input-event', (event, input) => {
+        // F12 or Ctrl+Shift+I to toggle DevTools
+        if (input.key === 'F12' || 
+            (input.control && input.shift && input.key === 'I')) {
+            if (win.webContents.isDevToolsOpened()) {
+                win.webContents.closeDevTools();
+            } else {
+                win.webContents.openDevTools();
+            }
+        }
+    });
+
     Menu.setApplicationMenu(null); // Disable the default menu
 
     if (process.env.NODE_ENV === 'development') {
