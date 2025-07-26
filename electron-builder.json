@@ -7,7 +7,7 @@
     },
     "win": {
         "target": ["portable", "msi"],
-        "icon": "src/assets/AccTrack.ico"
+        "icon": "src/assets/Icon.ico"
     },
     "linux": {
         "target": "AppImage",
